@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generatore di Testo su Vetro Bagnato</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        input, textarea {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1.1em;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .glass-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(2px);
+            pointer-events: none;
+        }
+
+        .text-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3em;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 90%;
+            filter: blur(0.5px);
+            z-index: 1;
+        }
+
+        .raindrop {
+            position: absolute;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.3));
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: fall linear infinite;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+            z-index: 10;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .share-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .share-link {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .share-input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .text-display {
+                font-size: 2em;
+            }
+
+            .glass-container {
+                height: 300px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .share-link {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            .text-display {
+                font-size: 1.5em;
+            }
+
+            .glass-container {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌧️ Generatore di Testo su Vetro Bagnato</h1>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="textInput">Inserisci il tuo testo:</label>
+                <textarea id="textInput" placeholder="Scrivi qui il tuo messaggio..."></textarea>
+            </div>
+            
+            <div class="controls">
+                <button onclick="generateText()">Genera Effetto</button>
+                <button onclick="clearText()">Cancella</button>
+                <button onclick="randomText()">Testo Casuale</button>
+            </div>
+        </div>
+
+        <div class="glass-container" id="glassContainer">
+            <div class="glass-overlay"></div>
+            <div class="text-display" id="textDisplay">Inserisci un testo per vedere l'effetto</div>
+        </div>
+
+        <div class="share-section" id="shareSection">
+            <h3 style="color: white; margin-bottom: 15px;">Condividi il tuo messaggio:</h3>
+            <div class="share-link">
+                <input type="text" id="shareInput" class="share-input" readonly placeholder="Il link apparirà qui...">
+                <button onclick="copyLink()">Copia Link</button>
+                <button onclick="shareLink()">Condividi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let raindrops = [];
+        let animationId;
+
+        // Gestione URL parameters per la condivisione
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Inizializzazione al caricamento della pagina
+        window.onload = function() {
+            const sharedText = getUrlParameter('text');
+            if (sharedText) {
+                document.getElementById('textInput').value = decodeURIComponent(sharedText);
+                generateText();
+            }
+            startRain();
+        };
+
+        function generateText() {
+            const text = document.getElementById('textInput').value.trim();
+            const display = document.getElementById('textDisplay');
+            
+            if (text) {
+                display.textContent = text;
+                generateShareLink(text);
+                startRain();
+            } else {
+                display.textContent = "Inserisci un testo per vedere l'effetto";
+                document.getElementById('shareInput').value = "";
+            }
+        }
+
+        function clearText() {
+            document.getElementById('textInput').value = "";
+            document.getElementById('textDisplay').textContent = "Inserisci un testo per vedere l'effetto";
+            document.getElementById('shareInput').value = "";
+        }
+
+        function randomText() {
+            const randomTexts = [
+                "Ciao mondo!",
+                "Ti amo ❤️",
+                "Buona giornata!",
+                "Sogni d'oro",
+                "Sei speciale",
+                "La vita è bella",
+                "Sorridi sempre",
+                "Tutto andrà bene",
+                "Credi in te stesso",
+                "Oggi è un nuovo giorno"
+            ];
+            
+            const randomIndex = Math.floor(Math.random() * randomTexts.length);
+            document.getElementById('textInput').value = randomTexts[randomIndex];
+            generateText();
+        }
+
+        function generateShareLink(text) {
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}?text=${encodeURIComponent(text)}`;
+            document.getElementById('shareInput').value = shareUrl;
+        }
+
+        function copyLink() {
+            const shareInput = document.getElementById('shareInput');
+            if (shareInput.value) {
+                shareInput.select();
+                document.execCommand('copy');
+                
+                // Feedback visivo
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = "Copiato!";
+                button.style.background = "rgba(76, 175, 80, 0.3)";
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = "rgba(255, 255, 255, 0.2)";
+                }, 2000);
+            }
+        }
+
+        function shareLink() {
+            const shareUrl = document.getElementById('shareInput').value;
+            
+            if (shareUrl && navigator.share) {
+                navigator.share({
+                    title: 'Messaggio su Vetro Bagnato',
+                    text: 'Guarda questo messaggio speciale!',
+                    url: shareUrl
+                });
+            } else if (shareUrl) {
+                copyLink();
+            }
+        }
+
+        function createRaindrop() {
+            const container = document.getElementById('glassContainer');
+            const raindrop = document.createElement('div');
+            raindrop.className = 'raindrop';
+            
+            // Dimensioni casuali
+            const size = Math.random() * 8 + 4;
+            raindrop.style.width = size + 'px';
+            raindrop.style.height = size * 1.5 + 'px';
+            
+            // Posizione casuale
+            raindrop.style.left = Math.random() * 100 + '%';
+            raindrop.style.top = '-20px';
+            
+            // Velocità casuale
+            const duration = Math.random() * 3 + 2;
+            raindrop.style.animationDuration = duration + 's';
+            
+            // Opacità casuale
+            raindrop.style.opacity = Math.random() * 0.7 + 0.3;
+            
+            container.appendChild(raindrop);
+            
+            // Rimuovi la goccia dopo l'animazione
+            setTimeout(() => {
+                if (raindrop.parentNode) {
+                    raindrop.parentNode.removeChild(raindrop);
+                }
+            }, duration * 1000);
+        }
+
+        function startRain() {
+            // Ferma la pioggia precedente
+            if (animationId) {
+                clearInterval(animationId);
+            }
+            
+            // Inizia una nuova pioggia
+            animationId = setInterval(createRaindrop, 200);
+        }
+
+        // Event listeners
+        document.getElementById('textInput').addEventListener('input', function() {
+            if (this.value.trim()) {
+                generateText();
+            }
+        });
+
+        document.getElementById('textInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                generateText();
+            }
+        });
+
+        // Gestione responsive per il touch
+        if ('ontouchstart' in window) {
+            document.addEventListener('touchstart', function() {});
+        }
+    </script>
+</body>
+</html>
